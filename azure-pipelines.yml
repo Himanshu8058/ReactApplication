@@ -1,0 +1,37 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+ branches:
+   include:
+     - master
+
+pool:
+  name: 'default'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '16.x'
+  displayName: 'node installation'
+- script: |
+    npm install
+    npm run build
+  displayName: 'install dependencies'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: 'Acr-connection'
+    repository: 'my-react-app'
+    command: 'buildAndPush'
+    Dockerfile: 'Dockerfile'
+- task: AzureRmWebAppDeployment@5
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'React-app-connection'
+    appType: 'webAppContainer'
+    WebAppName: 'react-appm'
+    DockerNamespace: 'myacrhimanshum1.azurecr.io'
