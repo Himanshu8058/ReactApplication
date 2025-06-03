@@ -24,7 +24,7 @@ steps:
     containerRegistry: 'Acr-connection'
     repository: 'my-react-app'
     command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
+    Dockerfile: 'Dockerfile'
 - task: AzureRmWebAppDeployment@5
   inputs:
     ConnectionType: 'AzureRM'
