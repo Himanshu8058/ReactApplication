@@ -16,11 +16,6 @@ steps:
   inputs:
     versionSource: 'spec'
     versionSpec: '16.x'
-  displayName: 'node installation'
-- script: |
-    npm install
-    npm run build
-  displayName: 'install dependencies'
 
 - task: Docker@2
   inputs:
