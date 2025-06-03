@@ -25,10 +25,12 @@ steps:
     repository: 'my-react-app'
     command: 'buildAndPush'
     Dockerfile: 'Dockerfile'
+
 - task: AzureRmWebAppDeployment@5
   inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'React-app-connection'
-    appType: 'webAppContainer'
-    WebAppName: 'react-appm'
-    DockerNamespace: 'myacrhimanshum1.azurecr.io'
+     ConnectionType: 'AzureRM'
+     azureSubscription: 'React-app-connection'
+     appType: 'webAppContainer'
+     WebAppName: 'react-appm'
+     DockerNamespace: 'myacrhimanshum1.azurecr.io'
+     DockerRepository: 'my-react-app'
