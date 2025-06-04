@@ -24,7 +24,7 @@ steps:
     azureSubscriptionEndpoint: 'React-container-app'
     azureContainerRegistry: 'acrreactcontainer.azurecr.io'
     command: 'Build an image'
-    dockerFile: '/Dockerfile'
+    dockerFile: 'Dockerfile'
     imageName: '$(Build.Repository.Name):$(Build.BuildId)'
 
 - task: Docker@1
