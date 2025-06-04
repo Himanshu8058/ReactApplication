@@ -11,48 +11,59 @@ variables:
   acrName: 'acrreactcontainer'
   fullImageName: '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '16.x'
+stages:
 
-- task: Docker@1
+# -------------------- BUILD STAGE --------------------
+- stage: Build
   displayName: 'Build Docker Image'
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    azureSubscriptionEndpoint: 'React-container-app'
-    azureContainerRegistry: 'acrreactcontainer.azurecr.io'
-    command: 'Build an image'
-    dockerFile: 'Dockerfile'
-    imageName: '$(Build.Repository.Name):$(Build.BuildId)'
+  jobs:
+    - job: BuildJob
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSource: 'spec'
+            versionSpec: '16.x'
 
-- task: Docker@1
-  inputs:
-    containerregistrytype: 'Azure Container Registry'
-    azureSubscriptionEndpoint: 'React-container-app'
-    azureContainerRegistry: 'acrreactcontainer.azurecr.io'
-    command: 'push'
-    imageName: '$(Build.Repository.Name):$(Build.BuildId)'
+        - task: Docker@1
+          displayName: 'Build Docker Image'
+          inputs:
+            containerregistrytype: 'Azure Container Registry'
+            azureSubscriptionEndpoint: 'React-container-app'
+            azureContainerRegistry: 'acrreactcontainer.azurecr.io'
+            command: 'Build an image'
+            dockerFile: 'Dockerfile'
+            imageName: '$(Build.Repository.Name):$(Build.BuildId)'
 
-  
-- task: AzureRmWebAppDeployment@5
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'React-container-app'
-    appType: 'webAppContainer'
-    WebAppName: 'React-container-app'
-    DockerNamespace: 'acrreactcontainer.azurecr.io'
-    DockerRepository: '$(Build.Repository.Name)'
-    DockerImageTag: '$(Build.BuildId)'
-    
-#- task: AzureRmWebAppDeployment@5
- # displayName: 'Deploy to App Service'
-  #inputs:
-   # ConnectionType: 'AzureRM'
-    #azureSubscription: 'React-app-connection'
-    #appType: 'webAppContainer'
-    #WebAppName: 'react-appm'
-    #DockerNamespace: '$(acrName).azurecr.io'
-    #DockerRepository: '$(imageName)'
-    #DockerImageTag: '$(Build.BuildId)'
+# -------------------- PUSH STAGE --------------------
+- stage: Push
+  displayName: 'Push Docker Image'
+  dependsOn: Build
+  jobs:
+    - job: PushJob
+      steps:
+        - task: Docker@1
+          displayName: 'Push Docker Image'
+          inputs:
+            containerregistrytype: 'Azure Container Registry'
+            azureSubscriptionEndpoint: 'React-container-app'
+            azureContainerRegistry: 'acrreactcontainer.azurecr.io'
+            command: 'push'
+            imageName: '$(Build.Repository.Name):$(Build.BuildId)'
+
+# -------------------- DEPLOY STAGE --------------------
+- stage: Deploy
+  displayName: 'Deploy to Azure App Service'
+  dependsOn: Push
+  jobs:
+    - job: DeployJob
+      steps:
+        - task: AzureRmWebAppDeployment@5
+          displayName: 'Deploy to App Service'
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: 'React-container-app'
+            appType: 'webAppContainer'
+            WebAppName: 'React-container-app'
+            DockerNamespace: 'acrreactcontainer.azurecr.io'
+            DockerRepository: '$(Build.Repository.Name)'
+            DockerImageTag: '$(Build.BuildId)'
