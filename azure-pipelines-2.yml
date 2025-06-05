@@ -4,7 +4,7 @@ trigger:
       - master
 
 pool:
-  name: 'default'  # Self-hosted agent pool
+  name: 'ubuntu-latest'  # Self-hosted agent pool
 
 variables:
   imageName: 'my-react-app'
