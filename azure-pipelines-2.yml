@@ -30,7 +30,7 @@ stages:
           displayName: 'Login to ACR'
           inputs:
             command: 'login'
-            containerRegistry: 'React-container-app'  # Service connection name
+            containerRegistry: 'MyAcrConnection'  # Service connection name
 
         - task: Docker@2
           displayName: 'Build and Push Docker Image'
@@ -38,7 +38,7 @@ stages:
             command: 'buildAndPush'
             repository: '$(imageName)'
             dockerfile: 'Dockerfile'
-            containerRegistry: 'React-container-app'  # ACR service connection
+            containerRegistry: 'MyAcrConnection'  # ACR service connection
             tags: |
               $(Build.BuildId)
 
