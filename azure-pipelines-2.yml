@@ -4,79 +4,55 @@ trigger:
       - master
 
 pool:
-  name: 'default'  # Your self-hosted agent pool
+  name: 'default'  # Self-hosted agent pool
 
 variables:
   imageName: 'my-react-app'
-  acrName: 'acrreactcontainer'
-  fullImageName: '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
+  acrLoginServer: 'acrreactcontainer.azurecr.io'
+  fullImageName: '$(acrLoginServer)/$(imageName):$(Build.BuildId)'
 
 stages:
 
-# -------------------- BUILD STAGE --------------------
-- stage: Build
-  displayName: 'Build Docker Image'
+# -------------------- BUILD + PUSH STAGE --------------------
+- stage: BuildAndPush
+  displayName: 'Build and Push Docker Image'
   jobs:
-    - job: BuildJob
+    - job: BuildPushJob
+      displayName: 'Build and Push Job'
       steps:
+
         - task: NodeTool@0
           inputs:
-            versionSource: 'spec'
             versionSpec: '16.x'
+          displayName: 'Use Node.js 16.x'
 
-        - task: Docker@1
-          displayName: 'Build Docker Image'
+        - task: Docker@2
+          displayName: 'Login to ACR'
           inputs:
-            containerregistrytype: 'Azure Container Registry'
-            azureSubscriptionEndpoint: 'React-container-app'
-            azureContainerRegistry: 'acrreactcontainer.azurecr.io'
-            command: 'Build'
-            dockerFile: 'Dockerfile'
-            imageName: '$(Build.Repository.Name):$(Build.BuildId)'
+            command: 'login'
+            containerRegistry: 'React-container-app'  # Service connection name
 
-# -------------------- PUSH STAGE --------------------
-- stage: Push
-  displayName: 'Push Docker Image'
-  dependsOn: Build
-  jobs:
-    - job: PushJob
-      steps:
-        - task: Docker@1
-          displayName: 'Push Docker Image'
+        - task: Docker@2
+          displayName: 'Build and Push Docker Image'
           inputs:
-            containerregistrytype: 'Azure Container Registry'
-            azureSubscriptionEndpoint: 'React-container-app'
-            azureContainerRegistry: 'acrreactcontainer.azurecr.io'
-            command: 'push'
-            imageName: '$(Build.Repository.Name):$(Build.BuildId)'
+            command: 'buildAndPush'
+            repository: '$(imageName)'
+            dockerfile: 'Dockerfile'
+            containerRegistry: 'React-container-app'  # ACR service connection
+            tags: |
+              $(Build.BuildId)
 
 # -------------------- DEPLOY STAGE --------------------
 - stage: Deploy
   displayName: 'Deploy to Azure App Service'
-  dependsOn: Push
+  dependsOn: BuildAndPush
   jobs:
     - job: DeployJob
+      displayName: 'Deploy Job'
       steps:
-      - task: AzureWebAppContainer@1
-        inputs:
-          azureSubscription: 'React-container-app'
-          appName: 'React-container-app'
-          containers: '$(Build.Repository.Name):$(Build.BuildId)'
-        
-        #- task: AzureWebApp@1
-         # inputs:
-         #   azureSubscription: 'React-container-app'
-         #   appType: 'webAppLinux'
-         #   appName: 'React-container-app'
-         #   package: 
-            
-        #- task: AzureRmWebAppDeployment@5
-         # displayName: 'Deploy to App Service'
-          #inputs:
-           # ConnectionType: 'AzureRM'
-            #azureSubscription: 'React-container-app'
-           # appType: 'webAppContainer'
-            #WebAppName: 'React-container-app'
-            #DockerNamespace: 'acrreactcontainer.azurecr.io'
-            #DockerRepository: '$(Build.Repository.Name)'
-            #DockerImageTag: '$(Build.BuildId)'
+        - task: AzureWebAppContainer@1
+          displayName: 'Deploy to Web App Container'
+          inputs:
+            azureSubscription: 'React-container-app'
+            appName: 'React-container-app'
+            containers: '$(fullImageName)'
