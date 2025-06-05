@@ -57,13 +57,20 @@ stages:
   jobs:
     - job: DeployJob
       steps:
-        - task: AzureRmWebAppDeployment@5
-          displayName: 'Deploy to App Service'
+        - task: AzureWebApp@1
           inputs:
-            ConnectionType: 'AzureRM'
             azureSubscription: 'React-container-app'
-            appType: 'webAppContainer'
-            WebAppName: 'React-container-app'
-            DockerNamespace: 'acrreactcontainer.azurecr.io'
-            DockerRepository: '$(Build.Repository.Name)'
-            DockerImageTag: '$(Build.BuildId)'
+            appType: 'webAppLinux'
+            appName: 'React-container-app'
+            package: 
+            
+        #- task: AzureRmWebAppDeployment@5
+         # displayName: 'Deploy to App Service'
+          #inputs:
+           # ConnectionType: 'AzureRM'
+            #azureSubscription: 'React-container-app'
+           # appType: 'webAppContainer'
+            #WebAppName: 'React-container-app'
+            #DockerNamespace: 'acrreactcontainer.azurecr.io'
+            #DockerRepository: '$(Build.Repository.Name)'
+            #DockerImageTag: '$(Build.BuildId)'
