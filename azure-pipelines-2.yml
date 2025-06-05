@@ -30,7 +30,7 @@ stages:
             containerregistrytype: 'Azure Container Registry'
             azureSubscriptionEndpoint: 'React-container-app'
             azureContainerRegistry: 'acrreactcontainer.azurecr.io'
-            command: 'Build an image'
+            command: 'Build'
             dockerFile: 'Dockerfile'
             imageName: '$(Build.Repository.Name):$(Build.BuildId)'
 
@@ -57,12 +57,18 @@ stages:
   jobs:
     - job: DeployJob
       steps:
-        - task: AzureWebApp@1
-          inputs:
-            azureSubscription: 'React-container-app'
-            appType: 'webAppLinux'
-            appName: 'React-container-app'
-            package: 
+      - task: AzureWebAppContainer@1
+        inputs:
+          azureSubscription: 'React-container-app'
+          appName: 'React-container-app'
+          containers: '$(Build.Repository.Name):$(Build.BuildId)'
+        
+        #- task: AzureWebApp@1
+         # inputs:
+         #   azureSubscription: 'React-container-app'
+         #   appType: 'webAppLinux'
+         #   appName: 'React-container-app'
+         #   package: 
             
         #- task: AzureRmWebAppDeployment@5
          # displayName: 'Deploy to App Service'
