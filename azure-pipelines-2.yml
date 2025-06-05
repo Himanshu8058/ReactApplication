@@ -4,7 +4,8 @@ trigger:
       - master
 
 pool:
-  name: 'ubuntu-latest'  # Self-hosted agent pool
+  vmImage: ubuntu-latest
+
 
 variables:
   imageName: 'my-react-app'
