@@ -71,7 +71,7 @@ stages:
            displayName: 'Deploy'
            inputs:
              azureSubscription: 'React-container-app'
-             appName: 'React-container-app'
+             appName: 'New-React-app'
              containers: '$(fullImageName)'
              
        # - task: AzureWebAppContainer@1
