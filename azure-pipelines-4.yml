@@ -1,0 +1,85 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+ branches:
+   include:
+     - master
+
+
+pool:
+  name: VMSS-agent
+
+variables:
+   appName:
+   azureSubscription: 'React-container-app'
+
+jobs:
+  - job: job1
+    displayName: 'Set up node js environment'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSource: 'spec'
+        versionSpec: '16.x'
+
+  - job: job2
+    displayName: 'Install dependencies'
+    dependsOn: job1
+    steps:
+      - script: npm install
+        displayName: 'install npm package'
+ 
+  - job: job3
+    displayName: 'Run Linting'
+    dependsOn: job2
+    steps:
+     - script: |
+         npm install eslint
+         npx eslint .
+         displayName: 'run linting'
+      
+  - job: job4
+    displayName: 'run unit test'
+    dependsOn: job3
+    steps:
+      - script: |
+
+         npm install --save-dev jest
+         npm test
+    
+  - job: job5
+    displayName: 'run security scan'
+    dependsOn: job4
+    steps:
+      - script: echo "Run security scan"
+  
+  - job: job6
+    displayName: 'build'
+    dependsOn: job5
+    steps:
+      - script: npm run build
+        displayName: 'build production files'
+
+  - job: job7
+    displayName: 'publish artifact'
+    dependsOn: job6
+    steps:
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
+
+  - job: job8
+    displayName: 'doload artifact'
+    dependsOn: job7
+    steps:
+      - task: DownloadBuildArtifacts@1
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.ArtifactsDirectory)'
