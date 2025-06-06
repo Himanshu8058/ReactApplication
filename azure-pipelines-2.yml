@@ -39,11 +39,13 @@ stages:
           #  containerRegistry: 'MyAcrConnection'  # Service connection name
 
         - task: Docker@2
+          displayName: 'Build & push Image'
           inputs:
-              containerRegistry: 'Acr-connection-new'
-              repository: '$(imageName)'
-              command: 'buildAndPush'
-              Dockerfile: 'Dockerfile' 
+            containerRegistry: 'Acr-connection-new'
+            repository: '$(imageName)'
+            command: 'buildAndPush'
+            Dockerfile: 'Dockerfile'
+            buildContext: 
 
        # - task: Docker@2
         #  displayName: 'Build and Push Docker Image'
