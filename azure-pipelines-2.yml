@@ -4,7 +4,7 @@ trigger:
       - master
 
 pool:
-  vmImage: ubuntu-latest
+  name: default
 
 
 variables:
@@ -26,22 +26,34 @@ stages:
           inputs:
             versionSpec: '16.x'
           displayName: 'Use Node.js 16.x'
-
         - task: Docker@2
-          displayName: 'Login to ACR'
+          displayName: 'Login-ACR'
           inputs:
+            containerRegistry: 'Acr-connection-new'
             command: 'login'
-            containerRegistry: 'MyAcrConnection'  # Service connection name
+
+       # - task: Docker@2
+        #  displayName: 'Login to ACR'
+        #  inputs:
+         #   command: 'login'
+          #  containerRegistry: 'MyAcrConnection'  # Service connection name
 
         - task: Docker@2
-          displayName: 'Build and Push Docker Image'
           inputs:
-            command: 'buildAndPush'
-            repository: '$(imageName)'
-            dockerfile: 'Dockerfile'
-            containerRegistry: 'MyAcrConnection'  # ACR service connection
-            tags: |
-              $(Build.BuildId)
+              containerRegistry: 'Acr-connection-new'
+              repository: '$(imageName)'
+              command: 'buildAndPush'
+              Dockerfile: 'Dockerfile' 
+
+       # - task: Docker@2
+        #  displayName: 'Build and Push Docker Image'
+         # inputs:
+          #  command: 'buildAndPush'
+           # repository: '$(imageName)'
+            #dockerfile: 'Dockerfile'
+           # containerRegistry: 'MyAcrConnection'  # ACR service connection
+            #tags: |
+             # $(Build.BuildId)
 
 # -------------------- DEPLOY STAGE --------------------
 - stage: Deploy
@@ -51,9 +63,16 @@ stages:
     - job: DeployJob
       displayName: 'Deploy Job'
       steps:
-        - task: AzureWebAppContainer@1
-          displayName: 'Deploy to Web App Container'
-          inputs:
-            azureSubscription: 'React-container-app'
-            appName: 'React-container-app'
-            containers: '$(fullImageName)'
+         - task: AzureWebAppContainer@1
+           displayName: 'Deploy'
+           inputs:
+             azureSubscription: 'React-container-app'
+             appName: 'React-container-app'
+             containers: '$(fullImageName)'
+             
+       # - task: AzureWebAppContainer@1
+       #  displayName: 'Deploy to Web App Container'
+       #   inputs:
+       #     azureSubscription: 'React-container-app'
+       #     appName: 'React-container-app'
+       #     containers: '$(fullImageName)'
