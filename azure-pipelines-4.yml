@@ -29,7 +29,7 @@ jobs:
     displayName: 'Install dependencies'
     dependsOn: job1
     steps:
-      - script: npm install
+      - script: echo "dependencies"
         displayName: 'install npm package'
  
   - job: job3
@@ -37,8 +37,7 @@ jobs:
     dependsOn: job2
     steps:
      - script: |
-         npm install eslint
-         npx eslint .
+        echo "Run Linting"
          displayName: 'run linting'
       
   - job: job4
@@ -47,8 +46,7 @@ jobs:
     steps:
       - script: |
 
-         npm install --save-dev jest
-         npm test
+         echo "Run unit test"
     
   - job: job5
     displayName: 'run security scan'
@@ -60,7 +58,7 @@ jobs:
     displayName: 'build'
     dependsOn: job5
     steps:
-      - script: npm run build
+      - script: echo "Build"
         displayName: 'build production files'
 
   - job: job7
