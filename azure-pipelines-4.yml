@@ -36,9 +36,8 @@ jobs:
     displayName: 'Run Linting'
     dependsOn: job2
     steps:
-     - script: |
-        echo "Run Linting"
-         displayName: 'run linting'
+     - script: echo "Run Linting"
+       displayName: 'run linting'
       
   - job: job4
     displayName: 'run unit test'
