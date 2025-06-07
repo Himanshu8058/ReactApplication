@@ -10,11 +10,11 @@ trigger:
 
 
 pool:
-  name: VMSS-agent
+  name: Pool-VMSS
 
 variables:
-   appName:
-   azureSubscription: 'React-container-app'
+   appName: 'React-app'
+   azureSubscription: 'Connection-NK'
 
 jobs:
   - job: job1
@@ -74,7 +74,7 @@ jobs:
           publishLocation: 'Container'
 
   - job: job8
-    displayName: 'doload artifact'
+    displayName: 'download artifact'
     dependsOn: job7
     steps:
       - task: DownloadBuildArtifacts@1
@@ -83,3 +83,20 @@ jobs:
           downloadType: 'single'
           artifactName: 'drop'
           downloadPath: '$(System.ArtifactsDirectory)'
+      
+  - job: job9
+    displayName: 'deploy to app service'
+    dependsOn: job8
+    steps:
+      - download: current
+        artifact: drop
+
+      - task: AzureRmWebAppDeployment@5
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'Connection-NK'
+          appType: 'webAppLinux'
+          WebAppName: 'React-app-vmss'
+          packageForLinux: '$(Pipeline.Workspace)/drop'
+          RuntimeStack: 'NODE|20-lts'
+          DeploymentTypeLinux: 'oneDeploy'
