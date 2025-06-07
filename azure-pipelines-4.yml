@@ -45,7 +45,6 @@ jobs:
     dependsOn: job3
     steps:
       - script: |
-
          echo "Run unit test"
     
   - job: job5
