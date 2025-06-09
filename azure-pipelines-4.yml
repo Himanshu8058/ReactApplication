@@ -10,7 +10,7 @@ trigger:
 
 
 pool:
-  name: Pool-VMSS
+  name: VMSS-agent
 
 variables:
    appName: 'React-app'
