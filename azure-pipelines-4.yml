@@ -69,20 +69,20 @@ jobs:
           ArtifactName: 'drop'
           publishLocation: 'Container'
 
-  - job: job8
-    displayName: 'download artifact'
-    dependsOn: job7
-    steps:
-      - task: DownloadBuildArtifacts@1
-        inputs:
-          buildType: 'current'
-          downloadType: 'single'
-          artifactName: 'drop'
-          downloadPath: '$(Build.ArtifactStagingDirectory)'
+  #- job: job8
+   # displayName: 'download artifact'
+    #dependsOn: job7
+    #steps:
+     # - task: DownloadBuildArtifacts@1
+      #  inputs:
+       #   buildType: 'current'
+        #  downloadType: 'single'
+         # artifactName: 'drop'
+          #downloadPath: '$(Build.ArtifactStagingDirectory)'
       
-  - job: job9
+  - job: job8
     displayName: 'deploy to app service'
-    dependsOn: job8
+    dependsOn: job7
     steps:
       - download: current
         artifact: drop
