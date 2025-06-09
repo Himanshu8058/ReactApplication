@@ -78,7 +78,7 @@ jobs:
           buildType: 'current'
           downloadType: 'single'
           artifactName: 'drop'
-          downloadPath: '$(System.ArtifactsDirectory)'
+          downloadPath: '$(Build.ArtifactStagingDirectory)'
       
   - job: job9
     displayName: 'deploy to app service'
