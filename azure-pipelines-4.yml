@@ -10,7 +10,7 @@ trigger:
 
 
 pool:
-  name: VMSS-agent
+  name: Instances
 
 variables:
    appName: 'React-app'
@@ -58,7 +58,7 @@ jobs:
     steps:
       - script: npm run build
         displayName: 'build production files'
-        - task: CopyFiles@2
+      - task: CopyFiles@2
         inputs:
           SourceFolder: 'build'
           Contents: '**'
