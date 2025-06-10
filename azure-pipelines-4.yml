@@ -76,17 +76,22 @@ jobs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
-
-  - job: job8
-    displayName: 'Deploy to App Service'
-    dependsOn: job6
-    steps:
       - task: DownloadBuildArtifacts@1
         inputs:
           buildType: 'current'
           downloadType: 'single'
           artifactName: 'drop'
           downloadPath: '$(Build.ArtifactStagingDirectory)'
+  - job: job8
+    displayName: 'Deploy to App Service'
+    dependsOn: job6
+    steps:
+    #  - task: DownloadBuildArtifacts@1
+     #   inputs:
+      #    buildType: 'current'
+       #   downloadType: 'single'
+        #  artifactName: 'drop'
+        #  downloadPath: '$(Build.ArtifactStagingDirectory)'
       #- download: current
        # artifact: drop
       - task: AzureRmWebAppDeployment@5
