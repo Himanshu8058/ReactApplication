@@ -29,22 +29,22 @@ jobs:
     displayName: 'Install dependencies'
     dependsOn: job1
     steps:
-      - script: echo "dependencies"
+      - script: npm install
         displayName: 'install npm package'
  
   - job: job3
     displayName: 'Run Linting'
     dependsOn: job2
     steps:
-     - script: echo "Run Linting"
+     - script: npm run lint
        displayName: 'run linting'
       
   - job: job4
     displayName: 'run unit test'
     dependsOn: job3
     steps:
-      - script: |
-         echo "Run unit test"
+      - script: npm test -- --watchAll=false
+        displayName: 'Run Unit Tests'
     
   - job: job5
     displayName: 'run security scan'
@@ -56,8 +56,13 @@ jobs:
     displayName: 'build'
     dependsOn: job5
     steps:
-      - script: echo "Build"
+      - script: npm run build
         displayName: 'build production files'
+        - task: CopyFiles@2
+        inputs:
+          SourceFolder: 'build'
+          Contents: '**'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)/build'
 
   - job: job7
     displayName: 'publish artifact'
