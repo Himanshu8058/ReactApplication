@@ -4,66 +4,62 @@
 # https://aka.ms/yaml
 
 trigger:
- branches:
-   include:
-     - master
-
+  branches:
+    include:
+      - master
 
 pool:
   name: Instances
 
 variables:
-   appName: 'React-app'
-   azureSubscription: 'Connection-NK'
+  appName: 'React-app'
+  azureSubscription: 'Connection-NK'
 
 jobs:
   - job: job1
     displayName: 'Set up node js environment'
     steps:
-    - checkout: self
-    - task: NodeTool@0
-      inputs:
-        versionSource: 'spec'
-        versionSpec: '16.x'
+      - checkout: self
+      - task: NodeTool@0
+        inputs:
+          versionSource: 'spec'
+          versionSpec: '16.x'
 
-  - job: job2
-    displayName: 'Install dependencies'
+  - job: job3
+    displayName: 'Run Linting'
     dependsOn: job1
     steps:
       - checkout: self
-      - script: npm install
-        displayName: 'install npm package'
- 
-  - job: job3
-    displayName: 'Run Linting'
-    dependsOn: job2
-    steps:
-     - checkout: self
-     - script: echo "run lint"
-       displayName: 'run linting'
-      
+      - script: echo "run lint"
+        displayName: 'run linting'
+
   - job: job4
-    displayName: 'run unit test'
+    displayName: 'Run Unit Test'
     dependsOn: job3
     steps:
       - checkout: self
       - script: echo "run unit test"
         displayName: 'Run Unit Tests'
-    
+
   - job: job5
-    displayName: 'run security scan'
+    displayName: 'Run Security Scan'
     dependsOn: job4
     steps:
       - checkout: self
       - script: echo "Run security scan"
-  
+
   - job: job6
-    displayName: 'build'
+    displayName: 'Install and Build'
     dependsOn: job5
     steps:
       - checkout: self
-      - script: npm run build
-        displayName: 'build production files'
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '16.x'
+      - script: |
+          npm install
+          npm run build
+        displayName: 'Install dependencies and build React app'
       - task: CopyFiles@2
         inputs:
           SourceFolder: 'build'
@@ -71,34 +67,21 @@ jobs:
           TargetFolder: '$(Build.ArtifactStagingDirectory)/build'
 
   - job: job7
-    displayName: 'publish artifact'
+    displayName: 'Publish Artifact'
     dependsOn: job6
     steps:
-      - checkout: self
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
 
-  #- job: job8
-   # displayName: 'download artifact'
-    #dependsOn: job7
-    #steps:
-     # - task: DownloadBuildArtifacts@1
-      #  inputs:
-       #   buildType: 'current'
-        #  downloadType: 'single'
-         # artifactName: 'drop'
-          #downloadPath: '$(Build.ArtifactStagingDirectory)'
-      
   - job: job8
-    displayName: 'deploy to app service'
+    displayName: 'Deploy to App Service'
     dependsOn: job7
     steps:
       - download: current
         artifact: drop
-
       - task: AzureRmWebAppDeployment@5
         inputs:
           ConnectionType: 'AzureRM'
