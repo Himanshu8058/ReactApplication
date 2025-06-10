@@ -81,8 +81,14 @@ jobs:
     displayName: 'Deploy to App Service'
     dependsOn: job7
     steps:
-      - download: current
-        artifact: drop
+      - task: DownloadBuildArtifacts@1
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(Build.ArtifactStagingDirectory)'
+      #- download: current
+       # artifact: drop
       - task: AzureRmWebAppDeployment@5
         inputs:
           ConnectionType: 'AzureRM'
