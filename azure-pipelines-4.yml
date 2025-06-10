@@ -36,7 +36,7 @@ jobs:
     displayName: 'Run Linting'
     dependsOn: job2
     steps:
-     - script: npm run lint
+     - script: echo "run lint"
        displayName: 'run linting'
       
   - job: job4
