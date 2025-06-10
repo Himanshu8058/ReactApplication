@@ -60,11 +60,12 @@ jobs:
           npm install
           npm run build
         displayName: 'Install dependencies and build React app'
+        failOnStderr: true
       - task: CopyFiles@2
         inputs:
           SourceFolder: 'build'
           Contents: '**'
-          TargetFolder: '$(Build.ArtifactStagingDirectory)/build'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - job: job7
     displayName: 'Publish Artifact'
@@ -72,7 +73,7 @@ jobs:
     steps:
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)/build'
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
           publishLocation: 'Container'
 
