@@ -67,10 +67,10 @@ jobs:
           Contents: '**'
           TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-  - job: job7
-    displayName: 'Publish Artifact'
-    dependsOn: job6
-    steps:
+ # - job: job7
+   # displayName: 'Publish Artifact'
+    #dependsOn: job6
+    #steps:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -79,7 +79,7 @@ jobs:
 
   - job: job8
     displayName: 'Deploy to App Service'
-    dependsOn: job7
+    dependsOn: job6
     steps:
       - task: DownloadBuildArtifacts@1
         inputs:
