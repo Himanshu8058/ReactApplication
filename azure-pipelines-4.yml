@@ -20,6 +20,7 @@ jobs:
   - job: job1
     displayName: 'Set up node js environment'
     steps:
+    - checkout: self
     - task: NodeTool@0
       inputs:
         versionSource: 'spec'
@@ -29,6 +30,7 @@ jobs:
     displayName: 'Install dependencies'
     dependsOn: job1
     steps:
+      - checkout: self
       - script: npm install
         displayName: 'install npm package'
  
@@ -36,6 +38,7 @@ jobs:
     displayName: 'Run Linting'
     dependsOn: job2
     steps:
+     - checkout: self
      - script: echo "run lint"
        displayName: 'run linting'
       
@@ -43,6 +46,7 @@ jobs:
     displayName: 'run unit test'
     dependsOn: job3
     steps:
+      - checkout: self
       - script: echo "run unit test"
         displayName: 'Run Unit Tests'
     
@@ -50,12 +54,14 @@ jobs:
     displayName: 'run security scan'
     dependsOn: job4
     steps:
+      - checkout: self
       - script: echo "Run security scan"
   
   - job: job6
     displayName: 'build'
     dependsOn: job5
     steps:
+      - checkout: self
       - script: npm run build
         displayName: 'build production files'
       - task: CopyFiles@2
@@ -68,6 +74,7 @@ jobs:
     displayName: 'publish artifact'
     dependsOn: job6
     steps:
+      - checkout: self
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
