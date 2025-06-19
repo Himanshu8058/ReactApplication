@@ -38,8 +38,8 @@ jobs:
        name: react_build
        path: .
       
-    - name: build app
-      uses: Azure/appservice-build@v3
+    #- name: build app
+     # uses: Azure/appservice-build@v3
     - name: deploy to app service
       uses: azure/webapps-deploy@v3
       with:
