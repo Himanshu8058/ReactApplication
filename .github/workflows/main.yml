@@ -12,22 +12,35 @@ jobs:
    runs-on: ubuntu-latest
    steps: 
    - name: checkout code
-   - uses: actions/checkout@v4.2.2
+     uses: actions/checkout@v4.2.2
    - name: node install
-   - uses: actions/setup-node@v3.9.1
+     uses: actions/setup-node@v3.9.1
      with:
        node-version: 18.x
    - name: install dependencies
      run: |
        npm install
        npm run build
+
+   - name: publish artifact
+     uses: actions/upload-artifact@v4.6.2
+     with:
+      name: react_build
+      path: build/
+      
   deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v4.3.0
+      with:
+       name: react_build
+       path: .
+      
     - name: build app
-    - uses: Azure/appservice-build@v3
+      uses: Azure/appservice-build@v3
     - name: deploy to app service
-    - uses: azure/webapps-deploy@v3
+      uses: azure/webapps-deploy@v3
       with:
           app-name: "pyApp"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
