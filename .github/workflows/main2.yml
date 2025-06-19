@@ -1,12 +1,14 @@
 name: CICD of React Application
 
 on: 
-   push: 
-     branches: ["Feature-VMSS"]
-   pull_request:
-     branches: ["Feature-VMSS"]
+  push: 
+    branches: ["Feature-VMSS"]
+  pull_request:
+    branches: ["Feature-VMSS"]
+
 permissions: 
   contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,25 +21,33 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Install deps, build, and add serve
+      - name: Install dependencies and build app
         run: |
           npm install
           npm run build
-          echo "const express = require('express'); const path = require('path'); const app = express(); const PORT = process.env.PORT || 8080; app.use(express.static(path.join(__dirname, 'build'))); app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'build', 'index.html'))); app.listen(PORT, () => console.log('Server running on port', PORT));" > server.js
-          npm install express
-   # npm install serve --save
 
-      - name: Upload app
+          # Generate server.js for Express
+          echo "const express = require('express'); \
+          const path = require('path'); \
+          const app = express(); \
+          const PORT = process.env.PORT || 8080; \
+          app.use(express.static(path.join(__dirname, 'build'))); \
+          app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'build', 'index.html'))); \
+          app.listen(PORT, () => console.log('Server running on port', PORT));" > server.js
+
+          npm install express
+
+      - name: Upload app with server
         uses: actions/upload-artifact@v4
         with:
           name: react_app
           path: |
-           build
-           package.json
-           package-lock.json
-           server.js
-           node_modules
-     
+            build
+            server.js
+            package.json
+            package-lock.json
+            node_modules
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -57,8 +67,3 @@ jobs:
           app-name: "ReactappActions"
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: .
-  
-     
-
-
-  
