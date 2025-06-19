@@ -2,9 +2,9 @@ name: CICD of React Application
 
 on: 
    push: 
-     branches: ["Feature-VMSS"]
+     branches: ["none"]
    pull_request:
-     branches: ["Feature-VMSS"]
+     branches: ["none"]
 permissions: 
   contents: read
 jobs:
