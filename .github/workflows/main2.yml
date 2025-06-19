@@ -43,8 +43,8 @@ jobs:
        path: build/
 
        
-    - name: Install dependencies (needed for serve)
-      run: npm install
+    #- name: Install dependencies (needed for serve)
+     # run: npm install
     
     
    
